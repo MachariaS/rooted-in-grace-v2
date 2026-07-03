@@ -1,0 +1,28 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  event: CollectionEntry<'events'>;
+}
+const { event } = Astro.props;
+const { title, description, date, format, locationOrLink, registrationUrl, capacityNote } = event.data;
+const day = date.toLocaleDateString('en-US', { day: 'numeric' });
+const month = date.toLocaleDateString('en-US', { month: 'short' });
+const fullDate = date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' });
+---
+<div class="event reveal">
+  <div class="date-chip">
+    <span class="d">{day}</span>
+    <span class="m">{month}</span>
+  </div>
+  <div>
+    <h3>{title}</h3>
+    <p class="where"><b>{format}</b> &middot; {fullDate}{locationOrLink ? ` · ${locationOrLink}` : ''}</p>
+    <p style="margin-top:8px;color:var(--ink-soft);font-size:.92rem">{description}</p>
+    {capacityNote && <p style="margin-top:6px;font-size:.82rem;color:var(--bark)">{capacityNote}</p>}
+  </div>
+  {registrationUrl
+    ? <a class="btn btn-line-dark" href={registrationUrl} target="_blank" rel="noopener noreferrer">Register</a>
+    : <a class="btn btn-line-dark" href="/grace-notes/#signup">Get notified</a>
+  }
+</div>

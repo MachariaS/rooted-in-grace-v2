@@ -1,0 +1,47 @@
+---
+import { getEntry } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const settings = (await getEntry('settings', 'settings'))!.data;
+
+const expectations = [
+  { title: 'A place to be honest', body: 'No performance, no polished testimony required — just real conversation.' },
+  { title: 'Faith held loosely and firmly', body: 'Room for doubt and devotion in the same breath.' },
+  { title: 'Care over advice', body: 'People who ask how you\'re doing and actually wait for the answer.' },
+];
+---
+<BaseLayout
+  title="Community"
+  description="What to expect from the Rooted in Grace community, and how to join."
+>
+  <section class="page-hero">
+    <div class="wrap">
+      <span class="eyebrow" style="justify-content:center;color:var(--sage)">Community</span>
+      <h1>You don't have to carry this <span class="script">alone</span></h1>
+      <p>A gathering place for people choosing honesty over performance.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <span class="eyebrow">What to Expect</span>
+      <h2>What you'll find inside</h2>
+      <div class="expect-grid">
+        {expectations.map((item) => (
+          <div class="expect-card reveal">
+            <h3>{item.title}</h3>
+            <p>{item.body}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="community">
+    <div class="wrap">
+      <h2>Ready when you are</h2>
+      <p class="expect">Join the community space to meet others walking a similar road — no pressure to share until you're ready.</p>
+      <a class="btn btn-cream" href={settings.communityJoinUrl} target="_blank" rel="noopener noreferrer">Join the community &rarr;</a>
+    </div>
+  </section>
+</BaseLayout>

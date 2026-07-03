@@ -1,0 +1,35 @@
+---
+interface Props {
+  id?: string;
+}
+const { id = 'signup' } = Astro.props;
+---
+<!--
+  Newsletter signup — currently wired to Netlify Forms (free, no account needed
+  beyond your Netlify site). Netlify collects submissions under
+  Site settings → Forms → grace-notes-signup.
+
+  SWAP POINT: to send these to MailerLite, Buttondown, ConvertKit, etc. instead:
+  1. Replace the `action`/`method`/`data-netlify` attributes below with your
+     provider's form action URL (they each give you a snippet like this).
+  2. Remove the hidden `form-name` input and the `netlify` attribute.
+  3. Keep the same field names/labels so the design doesn't change.
+-->
+<form
+  id={id}
+  class="notes-form"
+  name="grace-notes-signup"
+  method="POST"
+  data-netlify="true"
+  netlify-honeypot="bot-field"
+  action="/thanks/"
+>
+  <input type="hidden" name="form-name" value="grace-notes-signup" />
+  <p class="visually-hidden" style="position:absolute;left:-9999px">
+    <label>Don't fill this out if you're human: <input name="bot-field" /></label>
+  </p>
+  <label class="visually-hidden" for={`${id}-email`} style="position:absolute;left:-9999px">Email address</label>
+  <input id={`${id}-email`} type="email" name="email" placeholder="you@example.com" required />
+  <button class="btn btn-solid" type="submit">Send me Grace Notes</button>
+</form>
+<p class="notes-note">One gentle email, a couple of times a month. Unsubscribe anytime.</p>

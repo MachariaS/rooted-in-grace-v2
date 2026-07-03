@@ -1,0 +1,44 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import JournalCard from '../../components/JournalCard.astro';
+import EmptyState from '../../components/EmptyState.astro';
+import { categories } from '../../lib/categories';
+
+const posts = (await getCollection('journal')).sort(
+  (a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf()
+);
+---
+<BaseLayout
+  title="The Journal"
+  description="Short, honest reflections on hope, healing, faith, community, and mental wellness."
+>
+  <section class="page-hero">
+    <div class="wrap">
+      <span class="eyebrow" style="justify-content:center;color:var(--sage)">The Journal</span>
+      <h1>Reflections for the <span class="script">everyday</span></h1>
+      <p>Short pieces on hope, healing, faith, community, and wellness — written for ordinary days.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="filter-tabs">
+        <a href="/journal/" class="active">All</a>
+        {categories.map((cat) => (
+          <a href={`/journal/category/${cat.toLowerCase()}/`}>{cat}</a>
+        ))}
+      </div>
+      {posts.length > 0 ? (
+        <div class="cards">
+          {posts.map((post) => <JournalCard post={post} />)}
+        </div>
+      ) : (
+        <EmptyState
+          title="New reflections, soon"
+          body="Nothing published here yet — but the first Journal post is being written. Join Grace Notes to know when it's live."
+        />
+      )}
+    </div>
+  </section>
+</BaseLayout>

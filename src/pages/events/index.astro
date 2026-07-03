@@ -1,0 +1,60 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import EventRow from '../../components/EventRow.astro';
+import PastEventCard from '../../components/PastEventCard.astro';
+import EmptyState from '../../components/EmptyState.astro';
+import RootsDivider from '../../components/RootsDivider.astro';
+
+const now = new Date();
+const allEvents = await getCollection('events');
+const upcoming = allEvents.filter((e) => e.data.date >= now).sort((a, b) => a.data.date.valueOf() - b.data.date.valueOf());
+const past = allEvents.filter((e) => e.data.date < now).sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+---
+<BaseLayout
+  title="Events"
+  description="Online and in-person gatherings for hope, healing, and honest conversation."
+>
+  <section class="page-hero">
+    <div class="wrap">
+      <span class="eyebrow" style="justify-content:center;color:var(--sage)">Gather With Us</span>
+      <h1>Events & <span class="script">gatherings</span></h1>
+      <p>Come as you are — online or in person. Every gathering ends the same way it starts: gently.</p>
+    </div>
+  </section>
+
+  <section class="events">
+    <div class="wrap">
+      <h2>Upcoming</h2>
+      {upcoming.length > 0 ? (
+        <div class="event-list">
+          {upcoming.map((event) => <EventRow event={event} />)}
+        </div>
+      ) : (
+        <EmptyState
+          title="Our next gathering is being planned"
+          body="Nothing is on the calendar yet, but it's coming. Join Grace Notes so you never miss an invitation."
+        />
+      )}
+    </div>
+  </section>
+
+  <RootsDivider />
+
+  <section id="past">
+    <div class="wrap">
+      <span class="eyebrow">Look Back</span>
+      <h2>Past gatherings</h2>
+      {past.length > 0 ? (
+        <div class="past-grid">
+          {past.map((event) => <PastEventCard event={event} />)}
+        </div>
+      ) : (
+        <EmptyState
+          title="Our first gathering hasn't happened yet"
+          body="Once we gather, recordings and photos will live here for anyone who couldn't make it. Join Grace Notes to be part of the first one."
+        />
+      )}
+    </div>
+  </section>
+</BaseLayout>

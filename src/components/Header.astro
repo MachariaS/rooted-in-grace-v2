@@ -1,0 +1,35 @@
+---
+import Logomark from './Logomark.astro';
+
+const navItems = [
+  { href: '/stories/', label: 'Stories' },
+  { href: '/podcast/', label: 'Podcast' },
+  { href: '/journal/', label: 'Journal' },
+  { href: '/events/', label: 'Events' },
+  { href: '/about/', label: 'About' },
+  { href: '/contact/', label: 'Contact' },
+];
+
+const path = Astro.url.pathname;
+function isActive(href: string) {
+  return href !== '/' && path.startsWith(href);
+}
+---
+<a class="skip-link" href="#main">Skip to content</a>
+<header>
+  <div class="wrap nav">
+    <a class="brand" href="/">
+      <Logomark />
+      <span class="brand-name">Rooted in <span class="script">Grace</span></span>
+    </a>
+    <button class="nav-toggle" aria-label="Open menu" aria-expanded="false" onclick="toggleNav(this)">
+      <span></span><span></span><span></span>
+    </button>
+    <ul class="nav-links" id="navLinks">
+      {navItems.map((item) => (
+        <li><a href={item.href} aria-current={isActive(item.href) ? 'page' : undefined}>{item.label}</a></li>
+      ))}
+      <li><a class="btn btn-solid" href="/grace-notes/#signup">Join Grace Notes</a></li>
+    </ul>
+  </div>
+</header>

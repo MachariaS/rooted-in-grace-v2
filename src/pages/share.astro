@@ -1,0 +1,69 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const expectations = [
+  { glyph: '01', title: 'Anonymity is offered', body: 'Share under your name, a first name only, or fully anonymously — your call, always.' },
+  { glyph: '02', title: 'Editing, with your consent', body: 'We may lightly edit for length or clarity, but nothing is published without you seeing it first.' },
+  { glyph: '03', title: 'No perfect endings required', body: 'Your story doesn’t need a bow on it. Unfinished and honest is welcome here.' },
+];
+---
+<BaseLayout
+  title="Share Your Story"
+  description="From the Sidewalk is a space for honest stories about faith and hard seasons — anonymity offered, editing with consent, no perfect endings required."
+>
+  <section class="page-hero">
+    <div class="wrap">
+      <span class="eyebrow" style="justify-content:center;color:var(--sage)">From the Sidewalk</span>
+      <h1>Share your <span class="script">story</span></h1>
+      <p>Your story might be exactly what someone else needs to read today.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <span class="eyebrow">What to Expect</span>
+      <h2>Before you write anything</h2>
+      <div class="expect-grid">
+        {expectations.map((item) => (
+          <div class="expect-card reveal">
+            <span class="glyph">{item.glyph}</span>
+            <h3>{item.title}</h3>
+            <p>{item.body}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section style="padding-top:0">
+    <div class="wrap" style="max-width:680px">
+      <div class="form-panel reveal">
+        <h2 style="margin-top:0">Tell us what happened</h2>
+        <p class="lede" style="margin-bottom:28px">Take your time. There's no word count, and no wrong way to tell it.</p>
+        <form name="share-your-story" method="POST" data-netlify="true" netlify-honeypot="bot-field" action="/thanks/">
+          <input type="hidden" name="form-name" value="share-your-story" />
+          <p style="position:absolute;left:-9999px">
+            <label>Don't fill this out if you're human: <input name="bot-field" /></label>
+          </p>
+          <div class="field">
+            <label for="storyName">Name <span class="hint">(optional — leave blank to stay anonymous)</span></label>
+            <input type="text" id="storyName" name="name" />
+          </div>
+          <div class="field">
+            <label for="storyEmail">Email <span class="hint">(so we can follow up before publishing)</span></label>
+            <input type="email" id="storyEmail" name="email" required />
+          </div>
+          <div class="field">
+            <label for="storyText">Your story</label>
+            <textarea id="storyText" name="story" required></textarea>
+          </div>
+          <div class="checkbox-field">
+            <input type="checkbox" id="storyConsent" name="consent" value="yes" required />
+            <label for="storyConsent">I understand my story may be lightly edited for length or clarity, and that nothing will be published without my review and consent.</label>
+          </div>
+          <button class="btn btn-solid form-submit" type="submit">Send my story</button>
+        </form>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

@@ -1,0 +1,140 @@
+backend:
+  name: git-gateway
+  branch: main
+
+publish_mode: editorial_workflow
+
+media_folder: "public/images/uploads"
+public_folder: "/images/uploads"
+
+site_url: https://rootedingrace.org
+logo_url: /favicon.svg
+
+collections:
+  - name: "stories"
+    label: "Stories (From the Sidewalk)"
+    label_singular: "Story"
+    folder: "src/content/stories"
+    create: true
+    slug: "{{slug}}"
+    extension: "md"
+    format: "frontmatter"
+    identifier_field: "title"
+    summary: "{{title}} — {{publishDate}}"
+    fields:
+      - { label: "Title", name: "title", widget: "string" }
+      - { label: "Excerpt", name: "excerpt", widget: "text", hint: "One or two sentences shown on story cards." }
+      - { label: "Cover Image", name: "cover", widget: "image", required: false }
+      - { label: "Cover Image Alt Text", name: "coverAlt", widget: "string", required: false, hint: "Describe the image for screen readers." }
+      - { label: "Author Name", name: "authorName", widget: "string", required: false, hint: "Leave blank if anonymous." }
+      - { label: "Publish Anonymously", name: "isAnonymous", widget: "boolean", default: false }
+      - { label: "Publish Date", name: "publishDate", widget: "datetime" }
+      - { label: "Feature on Homepage", name: "featured", widget: "boolean", default: false }
+      - { label: "This Is a Sample Entry", name: "isSample", widget: "boolean", default: false, hint: "Turn off once you replace this with a real story." }
+      - { label: "Story", name: "body", widget: "markdown" }
+
+  - name: "podcast"
+    label: "Podcast Episodes"
+    label_singular: "Episode"
+    folder: "src/content/podcast"
+    create: true
+    slug: "episode-{{fields.episodeNumber}}-{{slug}}"
+    extension: "md"
+    format: "frontmatter"
+    identifier_field: "title"
+    summary: "Ep. {{episodeNumber}} — {{title}}"
+    fields:
+      - { label: "Title", name: "title", widget: "string" }
+      - { label: "Episode Number", name: "episodeNumber", widget: "number", value_type: "int" }
+      - { label: "Description", name: "description", widget: "text" }
+      - { label: "Publish Date", name: "publishDate", widget: "datetime" }
+      - { label: "Spotify Embed URL", name: "spotifyEmbedUrl", widget: "string", required: false, hint: "In Spotify, use Share → Embed episode, and paste the src= URL from the embed code." }
+      - { label: "Apple Podcasts URL", name: "appleUrl", widget: "string", required: false }
+      - { label: "YouTube URL", name: "youtubeUrl", widget: "string", required: false }
+      - { label: "Cover Image", name: "cover", widget: "image", required: false }
+      - { label: "Cover Image Alt Text", name: "coverAlt", widget: "string", required: false }
+      - { label: "This Is a Sample Entry", name: "isSample", widget: "boolean", default: false }
+      - { label: "Show Notes", name: "body", widget: "markdown", required: false }
+
+  - name: "journal"
+    label: "Journal Posts"
+    label_singular: "Journal Post"
+    folder: "src/content/journal"
+    create: true
+    slug: "{{slug}}"
+    extension: "md"
+    format: "frontmatter"
+    identifier_field: "title"
+    summary: "{{title}} — {{category}}"
+    fields:
+      - { label: "Title", name: "title", widget: "string" }
+      - label: "Category"
+        name: "category"
+        widget: "select"
+        options: ["Hope", "Healing", "Faith", "Community", "Wellness"]
+      - { label: "Excerpt", name: "excerpt", widget: "text" }
+      - { label: "Cover Image", name: "cover", widget: "image", required: false }
+      - { label: "Cover Image Alt Text", name: "coverAlt", widget: "string", required: false }
+      - { label: "Publish Date", name: "publishDate", widget: "datetime" }
+      - { label: "This Is a Sample Entry", name: "isSample", widget: "boolean", default: false }
+      - { label: "Post", name: "body", widget: "markdown" }
+
+  - name: "graceNotes"
+    label: "Grace Notes"
+    label_singular: "Grace Note"
+    folder: "src/content/graceNotes"
+    create: true
+    slug: "{{slug}}"
+    extension: "md"
+    format: "frontmatter"
+    identifier_field: "title"
+    summary: "{{title}} — {{date}}"
+    fields:
+      - { label: "Title", name: "title", widget: "string" }
+      - { label: "Date", name: "date", widget: "datetime" }
+      - { label: "This Is a Sample Entry", name: "isSample", widget: "boolean", default: false }
+      - { label: "Reflection", name: "body", widget: "markdown" }
+
+  - name: "events"
+    label: "Events"
+    label_singular: "Event"
+    folder: "src/content/events"
+    create: true
+    slug: "{{slug}}"
+    extension: "md"
+    format: "frontmatter"
+    identifier_field: "title"
+    summary: "{{title}} — {{date}}"
+    fields:
+      - { label: "Title", name: "title", widget: "string" }
+      - { label: "Description", name: "description", widget: "text" }
+      - { label: "Date & Time", name: "date", widget: "datetime", hint: "The event automatically moves to Past Gatherings the moment this date passes and the site rebuilds." }
+      - label: "Format"
+        name: "format"
+        widget: "select"
+        options: ["Online", "In person"]
+      - { label: "Location or Meeting Link", name: "locationOrLink", widget: "string", required: false }
+      - { label: "Registration URL", name: "registrationUrl", widget: "string", required: false, hint: "Luma, Eventbrite, Google Form, etc. Leave blank to show a 'Get notified' button instead." }
+      - { label: "Capacity Note", name: "capacityNote", widget: "string", required: false, hint: "e.g. 'Limited to 20 people'" }
+      - { label: "Recording URL", name: "recordingUrl", widget: "string", required: false, hint: "Fill in after the event, once you have a replay link." }
+      - { label: "Photo Gallery", name: "gallery", widget: "list", field: { label: "Photo", name: "image", widget: "image" }, required: false, hint: "Add photos after the event." }
+      - { label: "This Is a Sample Entry", name: "isSample", widget: "boolean", default: false }
+
+  - name: "settings"
+    label: "Site Settings"
+    files:
+      - name: "settings"
+        label: "General Settings"
+        file: "src/content/settings/settings.json"
+        fields:
+          - { label: "Tagline", name: "tagline", widget: "string" }
+          - { label: "Hero Description", name: "heroDescription", widget: "text" }
+          - { label: "Community Join URL", name: "communityJoinUrl", widget: "string", hint: "WhatsApp group, Discord invite, Circle community, etc." }
+          - { label: "Spotify Show URL", name: "spotifyUrl", widget: "string", required: false }
+          - { label: "Apple Podcasts URL", name: "appleUrl", widget: "string", required: false }
+          - { label: "YouTube URL", name: "youtubeUrl", widget: "string", required: false }
+          - { label: "Instagram URL", name: "instagramUrl", widget: "string", required: false }
+          - { label: "Facebook URL", name: "facebookUrl", widget: "string", required: false }
+          - { label: "Contact Email", name: "contactEmail", widget: "string" }
+          - { label: "Partner Blurb", name: "partnerBlurb", widget: "text" }
+          - { label: "Mental Wellness Disclaimer", name: "wellnessDisclaimer", widget: "text", hint: "Shown in the footer on every page. Please have this reviewed — it is not legal advice." }

@@ -1,0 +1,54 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import NewsletterForm from '../../components/NewsletterForm.astro';
+import EmptyState from '../../components/EmptyState.astro';
+import SampleBadge from '../../components/SampleBadge.astro';
+
+const notes = (await getCollection('graceNotes')).sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+const rendered = await Promise.all(
+  notes.map(async (note) => ({ note, Content: (await note.render()).Content }))
+);
+---
+<BaseLayout
+  title="Grace Notes"
+  description="Short reflections delivered a couple of times a month — for the hard days and the good ones."
+>
+  <section id="signup" class="notes" style="padding-top:80px">
+    <div class="wrap">
+      <div class="notes-panel reveal">
+        <span class="script">Grace</span>
+        <h1 style="font-family:var(--display);font-weight:500;font-size:clamp(2rem,4vw,2.75rem);color:var(--forest);margin:2px 0 18px">Notes for the days you need them</h1>
+        <p class="lede" style="margin:0 auto">Join Grace Notes and receive a short reflection a couple of times a month, plus first word on new stories, episodes, and gatherings.</p>
+        <NewsletterForm id="signup-archive" />
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <span class="eyebrow">The Archive</span>
+      <h2>Past Grace Notes</h2>
+      {rendered.length > 0 ? (
+        <div style="display:grid;gap:28px;margin-top:36px;max-width:70ch">
+          {rendered.map(({ note, Content }) => (
+            <div class="story-card reveal">
+              {note.data.isSample && <SampleBadge />}
+              <h3>{note.data.title}</h3>
+              <p class="meta" style="margin-bottom:16px">{note.data.date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</p>
+              <div class="article-body" style="padding:0;max-width:none">
+                <Content />
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <EmptyState
+          title="The archive starts here"
+          body="Every Grace Note ever sent will live here. Join below and you'll be the first to receive one."
+        />
+      )}
+    </div>
+  </section>
+</BaseLayout>

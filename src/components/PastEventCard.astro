@@ -1,0 +1,24 @@
+---
+import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  event: CollectionEntry<'events'>;
+}
+const { event } = Astro.props;
+const { title, description, date, recordingUrl, gallery } = event.data;
+const dateStr = date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+---
+<div class="past-card reveal">
+  <span class="when">{dateStr}</span>
+  <h3>{title}</h3>
+  <p>{description}</p>
+  {recordingUrl && <p style="margin-top:14px"><a href={recordingUrl} target="_blank" rel="noopener noreferrer">Watch the recording &rarr;</a></p>}
+  {gallery && gallery.length > 0 && (
+    <div class="gallery">
+      {gallery.slice(0, 6).map((img) => (
+        <Image src={img} alt="" width={200} height={200} loading="lazy" />
+      ))}
+    </div>
+  )}
+</div>

@@ -1,0 +1,37 @@
+---
+import { getEntry } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const settings = (await getEntry('settings', 'settings'))!.data;
+---
+<BaseLayout
+  title="Partner With Us"
+  description="Share a story, sponsor an episode, or collaborate with Rooted in Grace."
+>
+  <section class="page-hero">
+    <div class="wrap">
+      <span class="eyebrow" style="justify-content:center;color:var(--sage)">Partner With Us</span>
+      <h1>Help this space <span class="script">grow</span></h1>
+      <p>{settings.partnerBlurb}</p>
+    </div>
+  </section>
+
+  <section class="partner">
+    <div class="wrap split">
+      <div>
+        <span class="eyebrow">Ways to Help</span>
+        <h2>A few ways in</h2>
+        <ul>
+          <li><b>Share your story</b> Become part of <a href="/share/" style="color:var(--bark)">From the Sidewalk</a> — anonymously if you prefer.</li>
+          <li><b>Sponsor an episode</b> Help cover podcast production so every conversation stays free to listen to.</li>
+          <li><b>Collaborate</b> Counselors, creatives, and ministries — let's build something gentle together.</li>
+        </ul>
+      </div>
+      <div class="form-panel reveal">
+        <h3 style="margin-top:0">Start a conversation</h3>
+        <p class="lede" style="margin-bottom:24px">Tell us a little about what you have in mind.</p>
+        <a class="btn btn-solid" href={`mailto:${settings.contactEmail}`}>Email {settings.contactEmail}</a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

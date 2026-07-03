@@ -1,0 +1,55 @@
+---
+import { getEntry } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const settings = (await getEntry('settings', 'settings'))!.data;
+---
+<BaseLayout
+  title="Contact"
+  description="Get in touch with Rooted in Grace."
+>
+  <section class="page-hero">
+    <div class="wrap">
+      <span class="eyebrow" style="justify-content:center;color:var(--sage)">Say Hello</span>
+      <h1>We'd love to <span class="script">hear</span> from you</h1>
+      <p>Questions, story ideas, partnership thoughts — send them our way.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap contact-grid">
+      <div class="reveal">
+        <span class="eyebrow">Reach Us</span>
+        <h2>Get in touch</h2>
+        <ul class="contact-list">
+          <li><span>Email</span><a href={`mailto:${settings.contactEmail}`}>{settings.contactEmail}</a></li>
+          {settings.instagramUrl && <li><span>Instagram</span><a href={settings.instagramUrl} target="_blank" rel="noopener noreferrer">@rootedingrace</a></li>}
+          {settings.youtubeUrl && <li><span>YouTube</span><a href={settings.youtubeUrl} target="_blank" rel="noopener noreferrer">Watch on YouTube</a></li>}
+          {settings.spotifyUrl && <li><span>Podcast</span><a href={settings.spotifyUrl} target="_blank" rel="noopener noreferrer">Listen on Spotify</a></li>}
+        </ul>
+      </div>
+      <div class="form-panel reveal">
+        <h3 style="margin-top:0">Send a message</h3>
+        <form name="contact" method="POST" data-netlify="true" netlify-honeypot="bot-field" action="/thanks/">
+          <input type="hidden" name="form-name" value="contact" />
+          <p style="position:absolute;left:-9999px">
+            <label>Don't fill this out if you're human: <input name="bot-field" /></label>
+          </p>
+          <div class="field">
+            <label for="contactName">Name</label>
+            <input type="text" id="contactName" name="name" required />
+          </div>
+          <div class="field">
+            <label for="contactEmail">Email</label>
+            <input type="email" id="contactEmail" name="email" required />
+          </div>
+          <div class="field">
+            <label for="contactMessage">Message</label>
+            <textarea id="contactMessage" name="message" required></textarea>
+          </div>
+          <button class="btn btn-solid form-submit" type="submit">Send message</button>
+        </form>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

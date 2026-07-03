@@ -1,0 +1,78 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import NewsletterForm from '../components/NewsletterForm.astro';
+
+const mission = [
+  { num: '01', title: 'Hope', body: 'A steady reminder that the story isn’t over, no matter what this season looks like.' },
+  { num: '02', title: 'Healing', body: 'Space to name what hurts without being rushed toward a tidy resolution.' },
+  { num: '03', title: 'Encouragement', body: 'Words meant to be carried with you into an ordinary Tuesday.' },
+  { num: '04', title: 'Faith-based reflection', body: 'Honest faith — the kind that makes room for doubt, questions, and grace.' },
+  { num: '05', title: 'Mental wellness conversations', body: 'Talking about mental health as an act of faith, not a failure of it.' },
+  { num: '06', title: 'Community', body: 'People who will sit with you in the waiting, not just celebrate the arriving.' },
+];
+---
+<BaseLayout
+  title="About"
+  description="Why Rooted in Grace exists, and the mission behind it."
+>
+  <section class="page-hero">
+    <div class="wrap">
+      <span class="eyebrow" style="justify-content:center;color:var(--sage)">Our Story</span>
+      <h1>Why we're <span class="script">rooted</span></h1>
+      <p>A little about why this space exists, and who it's for.</p>
+    </div>
+  </section>
+
+  <section class="founder">
+    <div class="wrap split">
+      <div class="portrait-frame reveal">
+        <span>Founder portrait coming soon</span>
+      </div>
+      <div class="reveal">
+        <span class="eyebrow">The Founder</span>
+        <h2>I needed a space that didn't make me choose</h2>
+        <p class="lede" style="max-width:none">
+          I needed a space that didn't make me choose between my faith and my honesty about
+          how hard life had gotten. Church felt like it wanted my testimony to already have
+          an ending. Everywhere else felt like it wanted me to leave God out of it entirely.
+        </p>
+        <p style="margin-top:18px;color:var(--ink-soft)">
+          Rooted in Grace started as a handful of voice notes to a friend, then a blog post
+          I almost didn't publish, then a small circle of people who said, quietly, "me too."
+          It's built for anyone who wants to hold their faith and their struggles in the same
+          hand — without pretending either one away.
+        </p>
+        <p style="margin-top:18px;color:var(--ink-soft)">
+          There's no perfect ending required here. Just company for the walk.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <span class="eyebrow">What We're Building</span>
+      <h2>Six things this space holds space for</h2>
+      <div class="mission-grid">
+        {mission.map((item) => (
+          <div class="mission-item reveal">
+            <span class="num">{item.num}</span>
+            <h3>{item.title}</h3>
+            <p>{item.body}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section id="signup" class="notes">
+    <div class="wrap">
+      <div class="notes-panel reveal">
+        <span class="script">Grace</span>
+        <h2>Come along for the story</h2>
+        <p class="lede" style="margin:0 auto">Join Grace Notes to follow along as this space grows.</p>
+        <NewsletterForm id="about-signup" />
+      </div>
+    </div>
+  </section>
+</BaseLayout>

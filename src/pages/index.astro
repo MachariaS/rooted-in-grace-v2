@@ -1,0 +1,158 @@
+---
+import { getCollection, getEntry } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import RootsDivider from '../components/RootsDivider.astro';
+import Logomark from '../components/Logomark.astro';
+import StoryCard from '../components/StoryCard.astro';
+import JournalCard from '../components/JournalCard.astro';
+import EventRow from '../components/EventRow.astro';
+import PodcastEpisode from '../components/PodcastEpisode.astro';
+import NewsletterForm from '../components/NewsletterForm.astro';
+import EmptyState from '../components/EmptyState.astro';
+
+const settings = (await getEntry('settings', 'settings'))!.data;
+
+const stories = (await getCollection('stories')).sort((a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf());
+const featuredStory = stories.find((s) => s.data.featured) || stories[0];
+
+const episodes = (await getCollection('podcast')).sort((a, b) => b.data.episodeNumber - a.data.episodeNumber);
+const latestEpisode = episodes[0];
+
+const journalPosts = (await getCollection('journal'))
+  .sort((a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf())
+  .slice(0, 3);
+
+const now = new Date();
+const upcomingEvents = (await getCollection('events'))
+  .filter((e) => e.data.date >= now)
+  .sort((a, b) => a.data.date.valueOf() - b.data.date.valueOf())
+  .slice(0, 2);
+---
+<BaseLayout
+  title="Rooted in Grace"
+  description="A digital sanctuary for hope, healing, encouragement, faith-based reflection, and honest conversations about mental wellness — held together by community."
+>
+  <section class="hero">
+    <div class="wrap">
+      <Logomark class="mark" />
+      <h1>Rooted in <span class="script">Grace</span></h1>
+      <p class="tagline">{settings.tagline}</p>
+      <p class="sub">{settings.heroDescription}</p>
+      <div class="hero-cta">
+        <a class="btn btn-cream" href="/stories/">Read Stories</a>
+        <a class="btn btn-line" href="/podcast/">Listen to the Podcast</a>
+      </div>
+    </div>
+    <RootsDivider variant="hero" />
+  </section>
+
+  <section id="story">
+    <div class="wrap">
+      <span class="eyebrow">From the Sidewalk</span>
+      <h2>A story worth sitting with</h2>
+      {featuredStory ? (
+        <div style="max-width:640px">
+          <StoryCard story={featuredStory} />
+        </div>
+      ) : (
+        <EmptyState
+          title="The first story is on its way"
+          body="From the Sidewalk is a space for honest, anonymous-if-you-want-it stories about faith and hard seasons. The first one is being written with care — join Grace Notes to know the moment it's ready."
+        />
+      )}
+      <RootsDivider />
+    </div>
+  </section>
+
+  <section id="podcast" class="podcast">
+    <div class="wrap">
+      <span class="eyebrow" style="color:var(--sage)">The Podcast</span>
+      <h2>Conversations to sit with, not just listen to</h2>
+      {latestEpisode ? (
+        <PodcastEpisode episode={latestEpisode} />
+      ) : (
+        <div class="empty-state reveal" style="background:rgba(247,242,227,.06);border-color:rgba(247,242,227,.25)">
+          <h3 class="script" style="font-size:1.8rem;color:var(--cream)">The mic is warming up</h3>
+          <p style="color:rgba(247,242,227,.72)">Our first episode is in the works. Join Grace Notes and you'll be the first to hear it drop.</p>
+          <a class="btn btn-cream" href="/grace-notes/#signup">Join Grace Notes to hear first</a>
+        </div>
+      )}
+      <div class="platforms">
+        {settings.spotifyUrl && <a href={settings.spotifyUrl} target="_blank" rel="noopener noreferrer">Spotify</a>}
+        {settings.appleUrl && <a href={settings.appleUrl} target="_blank" rel="noopener noreferrer">Apple Podcasts</a>}
+        {settings.youtubeUrl && <a href={settings.youtubeUrl} target="_blank" rel="noopener noreferrer">YouTube</a>}
+      </div>
+    </div>
+  </section>
+
+  <section id="notes" class="notes">
+    <div class="wrap">
+      <div class="notes-panel reveal">
+        <span class="script">Grace</span>
+        <h2>Notes for the days you need them</h2>
+        <p class="lede" style="margin:0 auto">A short reflection, a couple times a month — for hope on the hard days and company on the good ones.</p>
+        <NewsletterForm id="signup" />
+      </div>
+    </div>
+  </section>
+
+  <section id="journal">
+    <div class="wrap">
+      <span class="eyebrow">The Journal</span>
+      <h2>Reflections on hope, healing, and everyday faith</h2>
+      {journalPosts.length > 0 ? (
+        <div class="cards">
+          {journalPosts.map((post) => <JournalCard post={post} />)}
+        </div>
+      ) : (
+        <EmptyState
+          title="New reflections, soon"
+          body="The Journal will hold short, honest reflections on hope, healing, faith, community, and wellness. Nothing here yet — but Grace Notes will let you know the moment the first one is live."
+        />
+      )}
+    </div>
+  </section>
+
+  <section class="events">
+    <div class="wrap">
+      <span class="eyebrow">Gather With Us</span>
+      <h2>Upcoming events</h2>
+      {upcomingEvents.length > 0 ? (
+        <div class="event-list">
+          {upcomingEvents.map((event) => <EventRow event={event} />)}
+        </div>
+      ) : (
+        <EmptyState
+          title="Our next gathering is being planned"
+          body="Online and in-person gatherings will show up here as they're scheduled. Join Grace Notes so you never miss an invitation."
+        />
+      )}
+      <p class="past-link"><a href="/events/#past">See past gatherings &rarr;</a></p>
+    </div>
+  </section>
+
+  <section id="community" class="community">
+    <div class="wrap">
+      <span class="eyebrow" style="justify-content:center;color:var(--sage)">Community</span>
+      <h2>You don't have to carry this alone</h2>
+      <p class="expect">Rooted in Grace is a community of people choosing honesty over performance — real conversation about faith, healing, and mental wellness, held gently.</p>
+      <a class="btn btn-cream" href={settings.communityJoinUrl} target="_blank" rel="noopener noreferrer">Join the community &rarr;</a>
+    </div>
+  </section>
+
+  <section id="partner">
+    <div class="wrap split">
+      <div>
+        <span class="eyebrow">Partner With Us</span>
+        <h2>Help this space grow</h2>
+        <p class="lede">{settings.partnerBlurb}</p>
+        <a class="btn btn-solid" href={`mailto:${settings.contactEmail}`} style="margin-top:26px">Start a conversation</a>
+      </div>
+      <ul>
+        <li><b>Share your story</b> Become part of <a href="/share/" style="color:var(--bark)">From the Sidewalk</a> — anonymously if you prefer.</li>
+        <li><b>Sponsor an episode</b> Help cover podcast production so every conversation stays free.</li>
+        <li><b>Collaborate</b> Counselors, creatives, and ministries — let's build something gentle together.</li>
+      </ul>
+    </div>
+  </section>
+</BaseLayout>

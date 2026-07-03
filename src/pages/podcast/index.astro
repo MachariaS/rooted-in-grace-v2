@@ -1,0 +1,44 @@
+---
+import { getCollection, getEntry } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PodcastEpisode from '../../components/PodcastEpisode.astro';
+import EmptyState from '../../components/EmptyState.astro';
+import RootsDivider from '../../components/RootsDivider.astro';
+
+const settings = (await getEntry('settings', 'settings'))!.data;
+const episodes = (await getCollection('podcast')).sort((a, b) => b.data.episodeNumber - a.data.episodeNumber);
+---
+<BaseLayout
+  title="The Podcast"
+  description="Conversations to sit with — faith, healing, and mental wellness, one honest episode at a time."
+>
+  <section class="page-hero">
+    <div class="wrap">
+      <span class="eyebrow" style="justify-content:center;color:var(--sage)">The Podcast</span>
+      <h1>Conversations to <span class="script">sit</span> with</h1>
+      <p>Honest talk about faith, healing, and mental wellness — free, and made for the quiet moments.</p>
+    </div>
+  </section>
+
+  <section class="podcast">
+    <div class="wrap">
+      {episodes.length > 0 ? (
+        <div style="display:grid;gap:24px">
+          {episodes.map((episode) => <PodcastEpisode episode={episode} />)}
+        </div>
+      ) : (
+        <div class="empty-state reveal" style="background:rgba(247,242,227,.06);border-color:rgba(247,242,227,.25)">
+          <h3 class="script" style="font-size:1.8rem;color:var(--cream)">The mic is warming up</h3>
+          <p style="color:rgba(247,242,227,.72)">Our first episode is being recorded with care. Join Grace Notes and you'll be first to hear it.</p>
+          <a class="btn btn-cream" href="/grace-notes/#signup">Join Grace Notes to hear first</a>
+        </div>
+      )}
+      <div class="platforms">
+        {settings.spotifyUrl && <a href={settings.spotifyUrl} target="_blank" rel="noopener noreferrer">Spotify</a>}
+        {settings.appleUrl && <a href={settings.appleUrl} target="_blank" rel="noopener noreferrer">Apple Podcasts</a>}
+        {settings.youtubeUrl && <a href={settings.youtubeUrl} target="_blank" rel="noopener noreferrer">YouTube</a>}
+      </div>
+    </div>
+  </section>
+  <RootsDivider />
+</BaseLayout>

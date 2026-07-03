@@ -1,0 +1,14 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  post: CollectionEntry<'journal'>;
+}
+const { post } = Astro.props;
+const { title, category, excerpt } = post.data;
+---
+<a class="card reveal" href={`/journal/${post.slug}/`}>
+  <span class="cat">{category}</span>
+  <h3>{title}</h3>
+  <p>{excerpt}</p>
+</a>

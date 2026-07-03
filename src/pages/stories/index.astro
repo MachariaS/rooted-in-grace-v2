@@ -1,0 +1,42 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import StoryCard from '../../components/StoryCard.astro';
+import EmptyState from '../../components/EmptyState.astro';
+import RootsDivider from '../../components/RootsDivider.astro';
+
+const stories = (await getCollection('stories')).sort(
+  (a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf()
+);
+---
+<BaseLayout
+  title="From the Sidewalk — Stories"
+  description="Honest, anonymous-if-you-want-it stories about faith, hard seasons, and finding your footing again."
+>
+  <section class="page-hero">
+    <div class="wrap">
+      <span class="eyebrow" style="justify-content:center;color:var(--sage)">From the Sidewalk</span>
+      <h1>Stories worth <span class="script">sitting</span> with</h1>
+      <p>Real accounts of faith and hard seasons, shared with consent — anonymously where that feels safer.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      {stories.length > 0 ? (
+        <div class="cards">
+          {stories.map((story) => <StoryCard story={story} />)}
+        </div>
+      ) : (
+        <EmptyState
+          title="The first story is on its way"
+          body="Someone is trusting us with their story right now. The first one from the Sidewalk will appear here soon — join Grace Notes to know the moment it does."
+        />
+      )}
+      <RootsDivider />
+      <p style="text-align:center;margin-top:24px">
+        <a class="btn btn-line-dark" href="/share/">Share your own story &rarr;</a>
+      </p>
+    </div>
+  </section>
+</BaseLayout>
