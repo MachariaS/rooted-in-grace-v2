@@ -1,5 +1,4 @@
 ---
-import { Image } from 'astro:assets';
 import type { CollectionEntry } from 'astro:content';
 
 interface Props {
@@ -11,7 +10,7 @@ const dateStr = publishDate.toLocaleDateString('en-US', { month: 'long', day: 'n
 ---
 <a class="story-card reveal" href={`/stories/${story.slug}/`} style="text-decoration:none;display:block">
   <span class="tag">From the Sidewalk</span>
-  {cover && <Image src={cover} alt={coverAlt || ''} width={640} height={360} style="border-radius:12px;margin-bottom:20px;object-fit:cover;aspect-ratio:16/9" loading="lazy" />}
+  {cover && <img src={cover} alt={coverAlt || ''} width="640" height="360" style="border-radius:12px;margin-bottom:20px;object-fit:cover;aspect-ratio:16/9;width:100%" loading="lazy" />}
   <h3>{title}</h3>
   <p>{excerpt}</p>
   <p class="meta">{isAnonymous ? 'Anonymous' : authorName || 'Anonymous'} &middot; {dateStr}</p>

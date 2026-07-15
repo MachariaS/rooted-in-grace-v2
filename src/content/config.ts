@@ -2,11 +2,10 @@ import { defineCollection, z } from 'astro:content';
 
 const stories = defineCollection({
   type: 'content',
-  schema: ({ image }) =>
-    z.object({
+  schema: z.object({
       title: z.string(),
       excerpt: z.string(),
-      cover: image().optional(),
+      cover: z.string().optional(),
       coverAlt: z.string().optional(),
       authorName: z.string().optional(),
       isAnonymous: z.boolean().default(false),
@@ -18,8 +17,7 @@ const stories = defineCollection({
 
 const podcast = defineCollection({
   type: 'content',
-  schema: ({ image }) =>
-    z.object({
+  schema: z.object({
       title: z.string(),
       episodeNumber: z.number(),
       description: z.string(),
@@ -27,7 +25,7 @@ const podcast = defineCollection({
       spotifyEmbedUrl: z.string().optional(),
       appleUrl: z.string().optional(),
       youtubeUrl: z.string().optional(),
-      cover: image().optional(),
+      cover: z.string().optional(),
       coverAlt: z.string().optional(),
       isSample: z.boolean().default(false),
     }),
@@ -35,12 +33,11 @@ const podcast = defineCollection({
 
 const journal = defineCollection({
   type: 'content',
-  schema: ({ image }) =>
-    z.object({
+  schema: z.object({
       title: z.string(),
       category: z.enum(['Hope', 'Healing', 'Faith', 'Community', 'Wellness']),
       excerpt: z.string(),
-      cover: image().optional(),
+      cover: z.string().optional(),
       coverAlt: z.string().optional(),
       publishDate: z.date(),
       isSample: z.boolean().default(false),
@@ -58,8 +55,7 @@ const graceNotes = defineCollection({
 
 const events = defineCollection({
   type: 'content',
-  schema: ({ image }) =>
-    z.object({
+  schema: z.object({
       title: z.string(),
       description: z.string(),
       date: z.date(),
@@ -68,7 +64,7 @@ const events = defineCollection({
       registrationUrl: z.string().optional(),
       capacityNote: z.string().optional(),
       recordingUrl: z.string().optional(),
-      gallery: z.array(image()).optional(),
+      gallery: z.array(z.string()).optional(),
       isSample: z.boolean().default(false),
     }),
 });

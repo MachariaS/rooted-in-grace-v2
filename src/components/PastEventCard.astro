@@ -1,5 +1,4 @@
 ---
-import { Image } from 'astro:assets';
 import type { CollectionEntry } from 'astro:content';
 
 interface Props {
@@ -17,7 +16,7 @@ const dateStr = date.toLocaleDateString('en-US', { month: 'long', year: 'numeric
   {gallery && gallery.length > 0 && (
     <div class="gallery">
       {gallery.slice(0, 6).map((img) => (
-        <Image src={img} alt="" width={200} height={200} loading="lazy" />
+        <img src={img} alt="" width="200" height="200" loading="lazy" style="object-fit:cover" />
       ))}
     </div>
   )}

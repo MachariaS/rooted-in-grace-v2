@@ -1,6 +1,5 @@
 ---
 import { getCollection } from 'astro:content';
-import { Image } from 'astro:assets';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import SampleBadge from '../../components/SampleBadge.astro';
 
@@ -17,7 +16,7 @@ const { title, excerpt, authorName, isAnonymous, publishDate, cover, coverAlt, i
 const { Content } = await story.render();
 const dateStr = publishDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
 ---
-<BaseLayout title={title} description={excerpt} image={cover?.src}>
+<BaseLayout title={title} description={excerpt} image={cover}>
   <article>
     <div class="article-hero">
       <div class="wrap">
@@ -28,7 +27,7 @@ const dateStr = publishDate.toLocaleDateString('en-US', { month: 'long', day: 'n
     </div>
     {cover && (
       <div class="article-cover">
-        <Image src={cover} alt={coverAlt || ''} width={880} height={495} />
+        <img src={cover} alt={coverAlt || ''} width="880" height="495" loading="lazy" style="width:100%;height:auto" />
       </div>
     )}
     <div class="article-body">
