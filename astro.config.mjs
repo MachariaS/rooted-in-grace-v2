@@ -2,6 +2,6 @@ import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 
 export default defineConfig({
-  site: 'https://rootedingrace.org',
+  site: 'https://rootedingrace.co.ke',
   integrations: [sitemap()],
 });

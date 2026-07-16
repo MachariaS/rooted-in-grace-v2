@@ -2,4 +2,4 @@ User-agent: *
 Allow: /
 Disallow: /admin/
 
-Sitemap: https://rootedingrace.org/sitemap-index.xml
+Sitemap: https://rootedingrace.co.ke/sitemap-index.xml
