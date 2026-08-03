@@ -6,7 +6,7 @@ excerpt: A simple conversation about church reminded me that sometimes we reject
 cover: /images/uploads/download-12-.jpg
 authorName: Mumbi Wainaina
 isAnonymous: false
-publishDate: 2026-08-03T23:01:00.000+03:00
+publishDate: 2026-08-03T23:04:00.000+03:00
 featured: true
 isSample: false
 ---
