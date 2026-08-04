@@ -1,12 +1,13 @@
 ---
 import type { CollectionEntry } from 'astro:content';
+import { formatDate } from '../lib/formatDate';
 
 interface Props {
   event: CollectionEntry<'events'>;
 }
 const { event } = Astro.props;
 const { title, description, date, recordingUrl, gallery } = event.data;
-const dateStr = date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+const dateStr = formatDate(date, { month: 'long', year: 'numeric' });
 ---
 <div class="past-card reveal">
   <span class="when">{dateStr}</span>

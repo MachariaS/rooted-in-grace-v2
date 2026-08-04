@@ -4,6 +4,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import NewsletterForm from '../../components/NewsletterForm.astro';
 import EmptyState from '../../components/EmptyState.astro';
 import SampleBadge from '../../components/SampleBadge.astro';
+import { formatDate } from '../../lib/formatDate';
 
 const notes = (await getCollection('graceNotes')).sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 
@@ -36,7 +37,7 @@ const rendered = await Promise.all(
             <div class="story-card reveal">
               {note.data.isSample && <SampleBadge />}
               <h3>{note.data.title}</h3>
-              <p class="meta" style="margin-bottom:16px">{note.data.date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</p>
+              <p class="meta" style="margin-bottom:16px">{formatDate(note.data.date, { month: 'long', day: 'numeric', year: 'numeric' })}</p>
               <div class="article-body" style="padding:0;max-width:none">
                 <Content />
               </div>

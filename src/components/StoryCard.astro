@@ -1,12 +1,13 @@
 ---
 import type { CollectionEntry } from 'astro:content';
+import { formatDate } from '../lib/formatDate';
 
 interface Props {
   story: CollectionEntry<'stories'>;
 }
 const { story } = Astro.props;
 const { title, excerpt, authorName, isAnonymous, publishDate, cover, coverAlt } = story.data;
-const dateStr = publishDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+const dateStr = formatDate(publishDate, { month: 'long', day: 'numeric', year: 'numeric' });
 ---
 <a class="story-card reveal" href={`/stories/${story.slug}/`} style="text-decoration:none;display:block">
   <span class="tag">From the Sidewalk</span>

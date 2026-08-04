@@ -1,14 +1,15 @@
 ---
 import type { CollectionEntry } from 'astro:content';
+import { formatDate } from '../lib/formatDate';
 
 interface Props {
   event: CollectionEntry<'events'>;
 }
 const { event } = Astro.props;
 const { title, description, date, format, locationOrLink, registrationUrl, capacityNote } = event.data;
-const day = date.toLocaleDateString('en-US', { day: 'numeric' });
-const month = date.toLocaleDateString('en-US', { month: 'short' });
-const fullDate = date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' });
+const day = formatDate(date, { day: 'numeric' });
+const month = formatDate(date, { month: 'short' });
+const fullDate = formatDate(date, { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' });
 ---
 <div class="event reveal">
   <div class="date-chip">
