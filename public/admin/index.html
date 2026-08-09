@@ -5,6 +5,67 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Content Manager — Rooted in Grace</title>
     <link rel="icon" href="/favicon.svg" />
+    <style>
+      #rig-help-bar {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 9998;
+        background: #26301f;
+        color: #f7f2e3;
+        font: 14px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        padding: 10px 16px;
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 12px;
+        box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.15);
+      }
+      #rig-help-bar b { color: #e8cb7e; }
+      #rig-help-bar button {
+        background: transparent;
+        border: 1px solid rgba(247, 242, 227, 0.4);
+        color: #f7f2e3;
+        border-radius: 6px;
+        padding: 4px 10px;
+        cursor: pointer;
+        font-size: 13px;
+      }
+      #rig-error-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+        background: rgba(27, 36, 22, 0.85);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        font: 15px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
+      #rig-error-overlay .card {
+        background: #fbf8ee;
+        color: #26301f;
+        max-width: 440px;
+        border-radius: 12px;
+        padding: 28px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+      }
+      #rig-error-overlay h2 { margin: 0 0 12px; font-size: 1.2rem; }
+      #rig-error-overlay p { margin: 0 0 10px; }
+      #rig-error-overlay ol { margin: 0 0 16px; padding-left: 20px; }
+      #rig-error-overlay .note { font-size: 13px; color: #5c6b45; }
+      #rig-error-overlay .btnrow { display: flex; gap: 10px; margin-top: 18px; }
+      #rig-error-overlay button {
+        border: none;
+        border-radius: 8px;
+        padding: 10px 16px;
+        font-size: 14px;
+        cursor: pointer;
+      }
+      #rig-error-overlay .primary { background: #26301f; color: #f7f2e3; }
+      #rig-error-overlay .secondary { background: transparent; border: 1px solid #26301f; color: #26301f; }
+    </style>
   </head>
   <body>
     <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
@@ -17,8 +78,88 @@
             });
           }
         });
+
+        // A frequent cause of the confusing "API_Error" message while
+        // publishing is the login session quietly expiring mid-edit on a
+        // longer post. Force-refreshing the token every 10 minutes while
+        // this tab is open keeps that from happening in the first place.
+        window.netlifyIdentity.on("init", (user) => {
+          if (user) {
+            setInterval(() => {
+              user.jwt(true).catch(() => {});
+            }, 10 * 60 * 1000);
+          }
+        });
+
+        window.netlifyIdentity.on("error", () => showRigFriendlyError());
       }
     </script>
+
+    <!-- Always-visible reminder, not just something that appears after -->
+    <div id="rig-help-bar">
+      <span
+        ><b>See a red error while saving?</b> Don't delete your entry —
+        refresh this page, log in again, then try Publish once more.</span
+      >
+      <button onclick="document.getElementById('rig-help-bar').style.display='none'">Got it</button>
+    </div>
+
+    <!-- Friendly explanation shown automatically when a save/publish call fails -->
+    <div id="rig-error-overlay" role="dialog" aria-modal="true" aria-labelledby="rig-error-title">
+      <div class="card">
+        <h2 id="rig-error-title">That didn't save — but your writing is safe</h2>
+        <p>This almost always means your login timed out, not that anything broke. Nothing you wrote has been lost.</p>
+        <ol>
+          <li>Click <b>Reload</b> below.</li>
+          <li>Log back in if it asks you to.</li>
+          <li>Open the entry again — it will still be there as a draft.</li>
+          <li>Try <b>Publish</b> again.</li>
+        </ol>
+        <p class="note"><b>Important:</b> please don't click Delete on the entry — that's the one action that actually removes your writing.</p>
+        <div class="btnrow">
+          <button class="primary" onclick="location.reload()">Reload</button>
+          <button class="secondary" onclick="document.getElementById('rig-error-overlay').style.display='none'">Dismiss</button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      var rigSuppressUntil = 0;
+
+      function showRigFriendlyError() {
+        if (Date.now() < rigSuppressUntil) return;
+        var el = document.getElementById("rig-error-overlay");
+        if (el) el.style.display = "flex";
+      }
+
+      document.addEventListener("click", function (e) {
+        if (e.target && e.target.closest && e.target.closest("#rig-error-overlay .secondary")) {
+          // Don't let the same toast immediately reopen the overlay after dismissal.
+          rigSuppressUntil = Date.now() + 8000;
+        }
+      });
+
+      // Decap CMS shows its own toast for failed save/publish calls — the
+      // "API_Error" text the error is actually named after. We can't
+      // change that text since it ships inside the CMS's own bundle, so
+      // instead we watch for it appearing and layer a calmer explanation
+      // on top of it.
+      var rigErrorPattern = /api_error|failed to persist|failed to load entry/i;
+      var rigObserver = new MutationObserver(function (mutations) {
+        for (var i = 0; i < mutations.length; i++) {
+          var added = mutations[i].addedNodes;
+          for (var j = 0; j < added.length; j++) {
+            var node = added[j];
+            if (node.nodeType === 1 && rigErrorPattern.test(node.textContent || "")) {
+              showRigFriendlyError();
+              return;
+            }
+          }
+        }
+      });
+      rigObserver.observe(document.body, { childList: true, subtree: true });
+    </script>
+
     <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
   </body>
 </html>
