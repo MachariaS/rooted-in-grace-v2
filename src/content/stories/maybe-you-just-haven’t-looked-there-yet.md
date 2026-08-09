@@ -7,7 +7,7 @@ cover: /images/uploads/pan.jpg
 coverAlt: The lost pan
 authorName: Mercy Kaguta
 isAnonymous: false
-publishDate: 2026-08-09T21:50:00.000+03:00
+publishDate: 2026-08-09T21:51:00.000+03:00
 featured: true
 isSample: false
 ---
