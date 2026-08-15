@@ -7,7 +7,7 @@ excerpt: A virtual Bible game night became more than just friendly competition.
   moments. We are learning, growing and becoming Rooted together.
 cover: /images/uploads/chatgpt-image-aug-13-2026-08_16_56-pm.png
 coverAlt: Game Night
-publishDate: 2026-08-15T22:01:00.000+03:00
+publishDate: 2026-08-15T22:02:00.000+03:00
 isSample: false
 ---
 Sometimes when we think about church, Bible study, or Christian community, we imagine sitting quietly, listening to a message, taking notes and going home. But what if growing in faith could also look like laughter, friendly competition, unexpected connections and simply having fun together?
