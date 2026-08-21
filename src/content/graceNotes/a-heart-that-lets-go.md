@@ -7,7 +7,9 @@ Sometimes we carry the weight of betrayal long after the moment has passed.
 
 Jacob expected Esau to remember what had happened between them, but when they reunited, Esau ran to him, embraced him, and wept with him.
 
-**“Then Esau ran to meet him and embraced him...” — Genesis 33:4, NLT**
+**“Then Esau ran to meet him and embraced him...”** 
+
+**Genesis 33:4**
 
 Maybe someone close to you hurt you. A friend. A sibling. Someone you trusted.
 
