@@ -32,7 +32,7 @@ A laptop.
 
 Button-like microphones.
 
-An iPhone 13 Pro Max.
+ iPhone 13 Pro Max.
 
 Money.
 
