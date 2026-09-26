@@ -4,7 +4,7 @@ A storytelling and community website for Rooted in Grace, built so the
 founder can publish stories, podcast episodes, journal posts, and events
 herself — no developer needed after launch.
 
-Stories that remind us we're not walking alone.
+Gentle growth for all hearts.
 
 ## Stack
 
