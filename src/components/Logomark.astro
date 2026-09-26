@@ -1,13 +1,15 @@
 ---
-import logoSvg from '../assets/logo.svg?raw';
+import logoGreen from '../assets/logo_green.svg?raw';
+import logoWhite from '../assets/logo_white.svg?raw';
 
 interface Props {
   class?: string;
+  variant?: 'green' | 'white';
 }
-const { class: className = '' } = Astro.props;
+const { class: className = '', variant = 'green' } = Astro.props;
 
-// Inline the SVG so it inherits `color` (fill is currentColor) and sizing from CSS.
-const svg = logoSvg.replace(
+// Inline the SVG so it can be sized with CSS.
+const svg = (variant === 'white' ? logoWhite : logoGreen).replace(
   '<svg ',
   `<svg class="logomark ${className}" role="img" aria-label="Rooted in Grace logo" `
 );

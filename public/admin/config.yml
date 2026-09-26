@@ -129,7 +129,7 @@ collections:
         fields:
           - { label: "Tagline", name: "tagline", widget: "string" }
           - { label: "Hero Description", name: "heroDescription", widget: "text" }
-          - { label: "Community Join URL", name: "communityJoinUrl", widget: "string", hint: "WhatsApp group, Discord invite, Circle community, etc." }
+          - { label: "Community Join URL", name: "communityJoinUrl", widget: "string", hint: "WhatsApp channel or community link. Also used for the WhatsApp icon in the footer." }
           - { label: "Spotify Show URL", name: "spotifyUrl", widget: "string", required: false }
           - { label: "Apple Podcasts URL", name: "appleUrl", widget: "string", required: false }
           - { label: "YouTube URL", name: "youtubeUrl", widget: "string", required: false }

@@ -23,7 +23,8 @@ const settings = (await getEntry('settings', 'settings'))!.data;
         <h2>Get in touch</h2>
         <ul class="contact-list">
           <li><span>Email</span><a href={`mailto:${settings.contactEmail}`}>{settings.contactEmail}</a></li>
-          {settings.instagramUrl && <li><span>Instagram</span><a href={settings.instagramUrl} target="_blank" rel="noopener noreferrer">@rootedingrace</a></li>}
+          {settings.instagramUrl && <li><span>Instagram</span><a href={settings.instagramUrl} target="_blank" rel="noopener noreferrer">@rootedingrace.ke</a></li>}
+          {settings.communityJoinUrl && <li><span>WhatsApp</span><a href={settings.communityJoinUrl} target="_blank" rel="noopener noreferrer">Follow our channel</a></li>}
           {settings.youtubeUrl && <li><span>YouTube</span><a href={settings.youtubeUrl} target="_blank" rel="noopener noreferrer">Watch on YouTube</a></li>}
           {settings.spotifyUrl && <li><span>Podcast</span><a href={settings.spotifyUrl} target="_blank" rel="noopener noreferrer">Listen on Spotify</a></li>}
         </ul>

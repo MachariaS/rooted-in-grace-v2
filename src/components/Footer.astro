@@ -1,6 +1,7 @@
 ---
 import { getEntry } from 'astro:content';
 import Logomark from './Logomark.astro';
+import SocialLinks from './SocialLinks.astro';
 
 const settings = await getEntry('settings', 'settings');
 const s = settings!.data;
@@ -11,10 +12,11 @@ const year = new Date().getFullYear();
     <div class="foot-grid">
       <div>
         <a class="brand" href="/" style="display:inline-flex;align-items:center;gap:12px">
-          <Logomark />
+          <Logomark variant="white" />
           <span class="brand-name">Rooted in <span class="script">Grace</span></span>
         </a>
         <p style="margin-top:14px;max-width:36ch">{s.tagline}</p>
+        <SocialLinks instagramUrl={s.instagramUrl} whatsappUrl={s.communityJoinUrl} />
       </div>
       <div>
         <h4>Explore</h4>

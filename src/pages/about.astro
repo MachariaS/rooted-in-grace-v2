@@ -2,7 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import NewsletterForm from '../components/NewsletterForm.astro';
 import { Image } from 'astro:assets';
-import founderPortrait from '../assets/founder-portrait.png';
+import founderPortrait from '../assets/Founder potrait.jpeg';
 
 const mission = [
   { num: '01', title: 'Hope', body: 'A steady reminder that the story isn’t over, no matter what this season looks like.' },
@@ -30,6 +30,7 @@ const mission = [
       <div class="portrait-frame reveal">
         <Image
           src={founderPortrait}
+          width={900}
           alt="Portrait of the founder of Rooted in Grace"
           widths={[400, 640, 900]}
           sizes="(max-width: 860px) 90vw, 45vw"

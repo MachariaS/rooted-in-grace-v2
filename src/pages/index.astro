@@ -2,7 +2,6 @@
 import { getCollection, getEntry } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import RootsDivider from '../components/RootsDivider.astro';
-import Logomark from '../components/Logomark.astro';
 import StoryCard from '../components/StoryCard.astro';
 import JournalCard from '../components/JournalCard.astro';
 import EventRow from '../components/EventRow.astro';
@@ -34,7 +33,6 @@ const upcomingEvents = (await getCollection('events'))
 >
   <section class="hero">
     <div class="wrap">
-      <Logomark class="mark" />
       <h1>Rooted in <span class="script">Grace</span></h1>
       <p class="tagline">{settings.tagline}</p>
       <p class="sub">{settings.heroDescription}</p>
