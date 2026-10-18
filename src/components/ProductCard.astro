@@ -1,0 +1,25 @@
+---
+import type { Product } from '../lib/shop';
+import { formatKES } from '../lib/shop';
+
+interface Props {
+  product: Product;
+}
+const { product } = Astro.props;
+const { title, price, summary, images, imageAlt, inStock } = product.data;
+---
+<a class="product-card reveal" href={`/shop/${product.slug}/`}>
+  <div class="product-image">
+    {images[0] ? (
+      <img src={images[0]} alt={imageAlt || title} width="600" height="600" loading="lazy" />
+    ) : (
+      <span class="product-image-empty">Photo coming soon</span>
+    )}
+    {!inStock && <span class="stock-chip">Sold out</span>}
+  </div>
+  <div class="product-body">
+    <h3>{title}</h3>
+    <p>{summary}</p>
+    <span class="price">{formatKES(price)}</span>
+  </div>
+</a>

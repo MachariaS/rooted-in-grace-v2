@@ -1,0 +1,163 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { confirmPayment, formatKES, getOrder, getShopSettings, orderNumber, type OrderStatus } from '../../lib/shop';
+
+export const prerender = false;
+
+// Manual M-Pesa: checkout sends the buyer here with ?reference=….
+// Paystack: Paystack sends the buyer back here with ?reference=… (or ?trxref=…) after paying.
+const reference = Astro.url.searchParams.get('reference') ?? Astro.url.searchParams.get('trxref');
+const settings = await getShopSettings();
+
+let status: OrderStatus | 'missing' | 'error' = 'missing';
+let order: any = null;
+if (reference) {
+  try {
+    order = await getOrder(reference);
+    if (order?.payment_method === 'paystack') ({ status, order } = await confirmPayment(reference));
+    else if (order) status = order.status;
+  } catch (err) {
+    console.error('order lookup failed', reference, err);
+    status = 'error';
+  }
+}
+const manual = order?.payment_method === 'manual_mpesa';
+const number = reference ? orderNumber(reference) : '';
+const confirmed = status === 'paid' || status === 'fulfilled';
+const accountLabel = settings.mpesaMethod === 'Till (Buy Goods)' ? 'Till number' : 'Number';
+Astro.response.headers.set('Cache-Control', 'no-store');
+---
+<BaseLayout title="Your order" description="Rooted in Grace order status.">
+  <section class="page-hero">
+    <div class="wrap">
+      <span class="eyebrow" style="justify-content:center;color:var(--sage)">The Shop</span>
+      {confirmed || status === 'awaiting_confirmation' ? (
+        <h1>Thank you, <span class="script">truly</span></h1>
+      ) : (
+        <h1>Your <span class="script">order</span></h1>
+      )}
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="notes-panel order-panel">
+        {manual && status === 'pending' && (
+          <>
+            <h2>Pay with M-Pesa to complete your order</h2>
+            <p class="lede" style="margin:0 auto">Your order is saved. Send the total below, then enter the code from your M-Pesa SMS.</p>
+            <dl class="mpesa-steps">
+              <div><dt>Amount</dt><dd>{formatKES(order.total)}</dd></div>
+              <div><dt>Pay via</dt><dd>M-Pesa {settings.mpesaMethod}</dd></div>
+              <div><dt>{accountLabel}</dt><dd>{settings.mpesaNumber || 'Please contact us for payment details'}</dd></div>
+              {settings.mpesaAccountName && <div><dt>Name</dt><dd>{settings.mpesaAccountName}</dd></div>}
+              <div><dt>Order number</dt><dd>{number}</dd></div>
+            </dl>
+            <form class="mpesa-form" id="mpesaForm" data-reference={reference}>
+              <div class="field">
+                <label for="mpesaCode">M-Pesa code</label>
+                <input id="mpesaCode" name="code" type="text" required maxlength="14" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="e.g. SJK3ABCD12" />
+              </div>
+              <p class="checkout-error" id="mpesaError" role="alert" hidden></p>
+              <button class="btn btn-solid form-submit" type="submit">I've paid, confirm my order</button>
+            </form>
+            <p class="secure-note">Keep this page link. You can come back to enter your code later.</p>
+          </>
+        )}
+        {status === 'awaiting_confirmation' && (
+          <>
+            <h2>We've got your M-Pesa code</h2>
+            <p class="lede" style="margin:0 auto">
+              We're checking your payment of {formatKES(order.total)} (code <b>{order.mpesa_code}</b>). Once it's
+              confirmed we'll call {order.phone} to arrange delivery.
+            </p>
+            <p class="order-ref">Order number: <b>{number}</b></p>
+            <a class="btn btn-solid" href="/shop/">Back to the shop</a>
+          </>
+        )}
+        {confirmed && (
+          <>
+            <h2>{status === 'fulfilled' ? 'Your order is on its way' : 'Your order is confirmed'}</h2>
+            <p class="lede" style="margin:0 auto">
+              We've received {formatKES(order.total)}.{' '}
+              {manual ? '' : `Paystack will email your receipt to ${order.email}. `}
+              {status === 'fulfilled' ? 'Thank you for growing with us.' : `We'll call ${order.phone} before we dispatch your order.`}
+            </p>
+            <p class="order-ref">Order number: <b>{number}</b></p>
+            <a class="btn btn-solid" href="/shop/">Back to the shop</a>
+          </>
+        )}
+        {!manual && status === 'pending' && (
+          <>
+            <h2>We're still waiting on your payment</h2>
+            <p class="lede" style="margin:0 auto">
+              If you approved the M-Pesa prompt, it can take a minute to come through. Refresh this page shortly.
+            </p>
+            <p class="order-ref">Order number: <b>{number}</b></p>
+            <a class="btn btn-solid" href={Astro.url.pathname + Astro.url.search}>Refresh</a>
+          </>
+        )}
+        {(status === 'failed' || status === 'cancelled') && (
+          <>
+            <h2>{status === 'cancelled' ? 'This order was cancelled' : "The payment didn't go through"}</h2>
+            <p class="lede" style="margin:0 auto">
+              {status === 'cancelled'
+                ? 'If you think this is a mistake, please contact us with your order number.'
+                : 'No money was taken. Your cart is still saved, so you can try again.'}
+            </p>
+            {number && <p class="order-ref">Order number: <b>{number}</b></p>}
+            <a class="btn btn-solid" href={status === 'cancelled' ? '/contact/' : '/shop/cart/'}>
+              {status === 'cancelled' ? 'Contact us' : 'Return to your cart'}
+            </a>
+          </>
+        )}
+        {(status === 'missing' || status === 'error') && (
+          <>
+            <h2>We couldn't find that order</h2>
+            <p class="lede" style="margin:0 auto">
+              If you've just paid and see this, please contact us with your M-Pesa message and we'll sort it out.
+            </p>
+            <a class="btn btn-solid" href="/contact/">Contact us</a>
+          </>
+        )}
+      </div>
+    </div>
+  </section>
+
+  {(manual || confirmed) && (
+    <script is:inline>
+      // The order is saved server-side, so the cart has done its job.
+      document.addEventListener('DOMContentLoaded', function () { window.RIGCart && window.RIGCart.clear(); });
+    </script>
+  )}
+
+  {manual && status === 'pending' && (
+    <script is:inline>
+      (function () {
+        var form = document.getElementById('mpesaForm');
+        var errorEl = document.getElementById('mpesaError');
+        form.addEventListener('submit', function (e) {
+          e.preventDefault();
+          var button = form.querySelector('button');
+          button.disabled = true;
+          errorEl.hidden = true;
+          fetch('/api/mpesa-code', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ reference: form.dataset.reference, code: form.elements.code.value }),
+          })
+            .then(function (res) { return res.json().then(function (body) { return { ok: res.ok, status: res.status, body: body }; }); })
+            .then(function (r) {
+              if (r.ok || r.body.stale) return window.location.reload();
+              throw new Error(r.body.error || 'Something went wrong. Please try again.');
+            })
+            .catch(function (err) {
+              errorEl.textContent = err.message || 'Something went wrong. Please try again.';
+              errorEl.hidden = false;
+              button.disabled = false;
+            });
+        });
+      })();
+    </script>
+  )}
+</BaseLayout>

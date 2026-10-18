@@ -1,0 +1,188 @@
+---
+import { getEntry } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getProducts } from '../../lib/shop';
+
+const settings = (await getEntry('settings', 'settings'))!.data;
+const manualMpesa = settings.paymentMode === 'manual_mpesa';
+const payLabel = manualMpesa ? 'Place order & pay with M-Pesa' : 'Pay with M-Pesa or card';
+const catalog = Object.fromEntries(
+  (await getProducts()).map((p) => [
+    p.slug,
+    { title: p.data.title, price: p.data.price, image: p.data.images[0] ?? null, inStock: p.data.inStock },
+  ])
+);
+---
+<BaseLayout title="Your cart" description="Review your Rooted in Grace order and check out.">
+  <section class="page-hero">
+    <div class="wrap">
+      <span class="eyebrow" style="justify-content:center;color:var(--sage)">The Shop</span>
+      <h1>Your <span class="script">cart</span></h1>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div id="cartEmpty" class="empty-state" hidden>
+        <h3 class="script" style="font-size:1.8rem">Your cart is empty</h3>
+        <p>Have a look around the shop and pick something that speaks to you.</p>
+        <a class="btn btn-solid" href="/shop/">Browse the shop</a>
+      </div>
+
+      <div id="cartFull" class="checkout-grid" hidden>
+        <div>
+          <h2 class="checkout-heading">Items</h2>
+          <ul class="cart-lines" id="cartLines"></ul>
+          <dl class="cart-totals">
+            <div><dt>Subtotal</dt><dd id="subtotal"></dd></div>
+            <div><dt>Delivery</dt><dd id="delivery"></dd></div>
+            <div class="grand"><dt>Total</dt><dd id="total"></dd></div>
+          </dl>
+          {settings.deliveryNote && <p class="delivery-note">{settings.deliveryNote}</p>}
+        </div>
+
+        <div class="form-panel">
+          <h3 style="margin-top:0;margin-bottom:22px">Delivery details</h3>
+          <form id="checkoutForm" novalidate>
+            <div class="field">
+              <label for="name">Full name</label>
+              <input type="text" id="name" name="name" autocomplete="name" required maxlength="120" />
+            </div>
+            <div class="field">
+              <label for="email">Email <span class="hint">for your receipt</span></label>
+              <input type="email" id="email" name="email" autocomplete="email" required maxlength="200" />
+            </div>
+            <div class="field">
+              <label for="phone">Phone <span class="hint">M-Pesa number works best</span></label>
+              <input type="tel" id="phone" name="phone" autocomplete="tel" required maxlength="30" placeholder="07XX XXX XXX" />
+            </div>
+            <div class="field">
+              <label for="address">Delivery address</label>
+              <input type="text" id="address" name="address" autocomplete="street-address" required maxlength="300" placeholder="Building, street, area" />
+            </div>
+            <div class="field">
+              <label for="town">Town / city</label>
+              <input type="text" id="town" name="town" autocomplete="address-level2" required maxlength="80" />
+            </div>
+            <div class="field">
+              <label for="notes">Notes <span class="hint">optional</span></label>
+              <textarea id="notes" name="notes" maxlength="500" style="min-height:90px"></textarea>
+            </div>
+            <p class="checkout-error" id="checkoutError" role="alert" hidden></p>
+            <button class="btn btn-solid form-submit" type="submit" id="payButton">{payLabel}</button>
+            <p class="secure-note">{manualMpesa ? "You'll get M-Pesa payment details on the next page." : "You'll be taken to Paystack to pay securely."}</p>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script type="application/json" id="catalogData" set:html={JSON.stringify({ catalog, deliveryFee: settings.deliveryFee, payLabel }).replace(/</g, '\\u003c')}></script>
+  <script is:inline>
+    // Runs after the deferred cart.js has defined window.RIGCart.
+    document.addEventListener('DOMContentLoaded', function () {
+      var data = JSON.parse(document.getElementById('catalogData').textContent);
+      var catalog = data.catalog;
+      var fmt = function (n) { return 'KES ' + n.toLocaleString('en-KE'); };
+
+      function validLines() {
+        // Drop anything no longer in the catalog (e.g. a product was removed).
+        var lines = window.RIGCart.lines();
+        var kept = lines.filter(function (l) { return catalog[l.slug]; });
+        if (kept.length !== lines.length) {
+          lines.filter(function (l) { return !catalog[l.slug]; }).forEach(function (l) { window.RIGCart.remove(l.slug, l.size); });
+        }
+        return kept;
+      }
+
+      function el(tag, cls, text) {
+        var e = document.createElement(tag);
+        if (cls) e.className = cls;
+        if (text != null) e.textContent = text;
+        return e;
+      }
+
+      function render() {
+        var lines = validLines();
+        document.getElementById('cartEmpty').hidden = lines.length > 0;
+        document.getElementById('cartFull').hidden = lines.length === 0;
+        var list = document.getElementById('cartLines');
+        list.innerHTML = '';
+        var subtotal = 0;
+
+        lines.forEach(function (line) {
+          var p = catalog[line.slug];
+          var lineTotal = p.price * line.quantity;
+          subtotal += lineTotal;
+
+          var li = el('li', 'cart-line');
+          var thumb = el('div', 'cart-thumb');
+          if (p.image) { var img = el('img'); img.src = p.image; img.alt = ''; thumb.appendChild(img); }
+          li.appendChild(thumb);
+
+          var info = el('div', 'cart-info');
+          var link = el('a', null, p.title); link.href = '/shop/' + line.slug + '/';
+          var h = el('h4'); h.appendChild(link); info.appendChild(h);
+          if (line.size) info.appendChild(el('p', 'cart-meta', 'Size: ' + line.size));
+          if (!p.inStock) info.appendChild(el('p', 'cart-meta cart-warn', 'Sold out — please remove to continue'));
+          info.appendChild(el('p', 'cart-meta', fmt(p.price) + ' each'));
+
+          var controls = el('div', 'cart-controls');
+          var qty = el('input'); qty.type = 'number'; qty.min = '1'; qty.max = '20'; qty.value = line.quantity;
+          qty.setAttribute('aria-label', 'Quantity of ' + p.title);
+          qty.addEventListener('change', function () {
+            window.RIGCart.setQuantity(line.slug, line.size, parseInt(qty.value, 10) || 1);
+          });
+          var rm = el('button', 'cart-remove', 'Remove'); rm.type = 'button';
+          rm.addEventListener('click', function () { window.RIGCart.remove(line.slug, line.size); });
+          controls.appendChild(qty); controls.appendChild(rm);
+          info.appendChild(controls);
+          li.appendChild(info);
+          li.appendChild(el('span', 'cart-line-total', fmt(lineTotal)));
+          list.appendChild(li);
+        });
+
+        document.getElementById('subtotal').textContent = fmt(subtotal);
+        document.getElementById('delivery').textContent = data.deliveryFee > 0 ? fmt(data.deliveryFee) : 'Free';
+        document.getElementById('total').textContent = fmt(subtotal + data.deliveryFee);
+      }
+
+      document.addEventListener('cart:change', render);
+      render();
+
+      var form = document.getElementById('checkoutForm');
+      var errorBox = document.getElementById('checkoutError');
+      var button = document.getElementById('payButton');
+
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        errorBox.hidden = true;
+        if (!form.checkValidity()) { form.reportValidity(); return; }
+
+        button.disabled = true;
+        button.textContent = 'Taking you to payment…';
+        var customer = {};
+        ['name', 'email', 'phone', 'address', 'town', 'notes'].forEach(function (k) { customer[k] = form.elements[k].value; });
+
+        fetch('/api/checkout', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ customer: customer, lines: validLines() }),
+        })
+          .then(function (res) { return res.json().then(function (body) { return { ok: res.ok, body: body }; }); })
+          .then(function (r) {
+            if (r.ok && r.body.url) { window.location.href = r.body.url; return; }
+            throw new Error(r.body.error || 'Something went wrong.');
+          })
+          .catch(function (err) {
+            errorBox.textContent = err.message && err.message !== 'Failed to fetch'
+              ? err.message
+              : 'We could not reach the payment service. Please check your connection and try again.';
+            errorBox.hidden = false;
+            button.disabled = false;
+            button.textContent = data.payLabel;
+          });
+      });
+    });
+  </script>
+</BaseLayout>

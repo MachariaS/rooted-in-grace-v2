@@ -6,6 +6,7 @@ const navItems = [
   { href: '/podcast/', label: 'Podcast' },
   { href: '/journal/', label: 'Journal' },
   { href: '/events/', label: 'Events' },
+  { href: '/shop/', label: 'Shop' },
   { href: '/about/', label: 'About' },
   { href: '/contact/', label: 'Contact' },
 ];
@@ -29,6 +30,16 @@ function isActive(href: string) {
       {navItems.map((item) => (
         <li><a href={item.href} aria-current={isActive(item.href) ? 'page' : undefined}>{item.label}</a></li>
       ))}
+      <li>
+        <a class="cart-link" href="/shop/cart/" aria-current={path.startsWith('/shop/cart') ? 'page' : undefined}>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M5 8h14l-1.2 11.2a2 2 0 0 1-2 1.8H8.2a2 2 0 0 1-2-1.8L5 8Z" />
+            <path d="M9 10V7a3 3 0 0 1 6 0v3" />
+          </svg>
+          <span class="cart-label">Cart</span>
+          <span class="cart-count" data-cart-count hidden></span>
+        </a>
+      </li>
       <li><a class="btn btn-solid" href="/grace-notes/#signup">Join Grace Notes</a></li>
     </ul>
   </div>

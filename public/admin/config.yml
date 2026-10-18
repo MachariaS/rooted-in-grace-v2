@@ -120,6 +120,27 @@ collections:
       - { label: "Photo Gallery", name: "gallery", widget: "list", field: { label: "Photo", name: "image", widget: "image" }, required: false, hint: "Add photos after the event." }
       - { label: "This Is a Sample Entry", name: "isSample", widget: "boolean", default: false }
 
+  - name: "products"
+    label: "Shop Products"
+    label_singular: "Product"
+    folder: "src/content/products"
+    create: true
+    slug: "{{slug}}"
+    extension: "md"
+    format: "frontmatter"
+    identifier_field: "title"
+    summary: "{{title}} — KES {{price}}"
+    fields:
+      - { label: "Title", name: "title", widget: "string" }
+      - { label: "Price (KES)", name: "price", widget: "number", value_type: "int", min: 1, hint: "Whole shillings, no commas. e.g. 1500" }
+      - { label: "Short Summary", name: "summary", widget: "string", hint: "One line shown on the shop grid." }
+      - { label: "Photos", name: "images", widget: "list", field: { label: "Photo", name: "image", widget: "image" }, hint: "The first photo is the main one. Square photos look best." }
+      - { label: "Photo Description", name: "imageAlt", widget: "string", required: false, hint: "Describe the main photo for people using screen readers." }
+      - { label: "Sizes", name: "sizes", widget: "list", required: false, hint: "Leave empty for items without sizes (mugs, journals). For apparel add e.g. S, M, L, XL." }
+      - { label: "In Stock", name: "inStock", widget: "boolean", default: true, hint: "Turn off to show the item as sold out." }
+      - { label: "Display Order", name: "sortOrder", widget: "number", value_type: "int", default: 100, hint: "Lower numbers show first." }
+      - { label: "Description", name: "body", widget: "markdown", hint: "Details: materials, sizing, care instructions." }
+
   - name: "settings"
     label: "Site Settings"
     files:
@@ -138,3 +159,15 @@ collections:
           - { label: "Contact Email", name: "contactEmail", widget: "string" }
           - { label: "Partner Blurb", name: "partnerBlurb", widget: "text" }
           - { label: "Mental Wellness Disclaimer", name: "wellnessDisclaimer", widget: "text", hint: "Shown in the footer on every page. Please have this reviewed — it is not legal advice." }
+          - { label: "Shop Delivery Fee (KES)", name: "deliveryFee", widget: "number", value_type: "int", min: 0, default: 0, hint: "Flat fee added to every shop order. Use 0 for free delivery." }
+          - { label: "Shop Delivery Note", name: "deliveryNote", widget: "string", required: false, hint: "Shown under the order total in the cart." }
+          - label: "Shop Payment Method"
+            name: "paymentMode"
+            widget: "select"
+            default: "manual_mpesa"
+            options:
+              - { label: "Manual M-Pesa (team confirms each payment)", value: "manual_mpesa" }
+              - { label: "Paystack (automatic, needs a verified Paystack account)", value: "paystack" }
+          - { label: "M-Pesa Type", name: "mpesaMethod", widget: "select", options: ["Pochi la Biashara", "Till (Buy Goods)", "Send Money"], default: "Pochi la Biashara" }
+          - { label: "M-Pesa Number", name: "mpesaNumber", widget: "string", required: false, hint: "The phone or Till number buyers pay to. Checkout stays closed until this is filled in." }
+          - { label: "M-Pesa Account Name", name: "mpesaAccountName", widget: "string", required: false, hint: "The name buyers will see on the M-Pesa prompt, so they know they're paying the right person." }

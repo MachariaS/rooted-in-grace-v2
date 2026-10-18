@@ -10,7 +10,9 @@
     "astro": "astro"
   },
   "dependencies": {
+    "@astrojs/netlify": "^5.5.4",
     "@astrojs/sitemap": "3.2.1",
+    "@supabase/supabase-js": "^2.118.0",
     "astro": "^4.16.0"
   }
 }

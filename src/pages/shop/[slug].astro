@@ -1,0 +1,105 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getProducts, formatKES, type Product } from '../../lib/shop';
+
+export async function getStaticPaths() {
+  const products = await getProducts();
+  return products.map((product) => ({ params: { slug: product.slug }, props: { product } }));
+}
+
+interface Props {
+  product: Product;
+}
+const { product } = Astro.props;
+const { title, price, summary, images, imageAlt, sizes, inStock } = product.data;
+const { Content } = await product.render();
+---
+<BaseLayout title={title} description={summary} image={images[0]}>
+  <section>
+    <div class="wrap">
+      <p class="back-link"><a href="/shop/">&larr; Back to the shop</a></p>
+      <div class="product-detail">
+        <div class="product-gallery">
+          <div class="product-image">
+            {images[0] ? (
+              <img id="mainImage" src={images[0]} alt={imageAlt || title} width="900" height="900" />
+            ) : (
+              <span class="product-image-empty">Photo coming soon</span>
+            )}
+          </div>
+          {images.length > 1 && (
+            <div class="product-thumbs">
+              {images.map((src, i) => (
+                <button type="button" data-thumb={src} aria-label={`Show photo ${i + 1}`} aria-pressed={i === 0 ? 'true' : 'false'}>
+                  <img src={src} alt="" width="120" height="120" loading="lazy" />
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <div>
+          <span class="eyebrow">Rooted in Grace</span>
+          <h1 class="product-title">{title}</h1>
+          <p class="price price-lg">{formatKES(price)}</p>
+          <p class="lede" style="max-width:none">{summary}</p>
+
+          {inStock ? (
+            <form class="add-form" id="addForm" data-slug={product.slug}>
+              {sizes.length > 0 && (
+                <fieldset class="size-picker">
+                  <legend>Size</legend>
+                  <div class="size-options">
+                    {sizes.map((size) => (
+                      <label>
+                        <input type="radio" name="size" value={size} required />
+                        <span>{size}</span>
+                      </label>
+                    ))}
+                  </div>
+                </fieldset>
+              )}
+              <div class="qty-row">
+                <label for="qty">Quantity</label>
+                <input id="qty" name="quantity" type="number" min="1" max="20" value="1" inputmode="numeric" />
+              </div>
+              <button class="btn btn-solid" type="submit">Add to cart</button>
+              <p class="add-status" id="addStatus" role="status" aria-live="polite"></p>
+            </form>
+          ) : (
+            <p class="sold-out-note">This piece is sold out for now. Check back soon.</p>
+          )}
+
+          <div class="product-description">
+            <Content />
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script is:inline>
+    (function () {
+      var main = document.getElementById('mainImage');
+      document.querySelectorAll('[data-thumb]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          if (main) main.src = btn.getAttribute('data-thumb');
+          document.querySelectorAll('[data-thumb]').forEach(function (b) {
+            b.setAttribute('aria-pressed', b === btn ? 'true' : 'false');
+          });
+        });
+      });
+
+      var form = document.getElementById('addForm');
+      if (!form) return;
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        var size = form.querySelector('input[name=size]:checked');
+        var qty = parseInt(form.elements.quantity.value, 10) || 1;
+        window.RIGCart.add(form.dataset.slug, size ? size.value : undefined, Math.max(1, Math.min(20, qty)));
+        var status = document.getElementById('addStatus');
+        status.innerHTML = 'Added to your cart. <a href="/shop/cart/">View cart &rarr;</a>';
+      });
+    })();
+  </script>
+</BaseLayout>

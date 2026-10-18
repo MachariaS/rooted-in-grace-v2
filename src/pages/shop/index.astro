@@ -1,0 +1,37 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ProductCard from '../../components/ProductCard.astro';
+import RootsDivider from '../../components/RootsDivider.astro';
+import { getProducts } from '../../lib/shop';
+
+const products = await getProducts();
+---
+<BaseLayout
+  title="Shop"
+  description="Rooted in Grace merch — wear the reminder, and help keep this space growing."
+>
+  <section class="page-hero">
+    <div class="wrap">
+      <span class="eyebrow" style="justify-content:center;color:var(--sage)">The Shop</span>
+      <h1>Carry the <span class="script">reminder</span></h1>
+      <p>Pieces made to go with you into ordinary days. Every order helps keep Rooted in Grace growing.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      {products.length > 0 ? (
+        <div class="product-grid">
+          {products.map((product) => <ProductCard product={product} />)}
+        </div>
+      ) : (
+        <div class="empty-state reveal">
+          <h3 class="script" style="font-size:1.8rem">The first pieces are on their way</h3>
+          <p>We're getting our first merch ready. Join Grace Notes and we'll let you know the moment the shop opens.</p>
+          <a class="btn btn-solid" href="/grace-notes/#signup">Join Grace Notes to hear first</a>
+        </div>
+      )}
+      <RootsDivider />
+    </div>
+  </section>
+</BaseLayout>
