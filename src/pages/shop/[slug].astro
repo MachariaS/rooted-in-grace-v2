@@ -20,17 +20,36 @@ const { Content } = await product.render();
       <p class="back-link"><a href="/shop/">&larr; Back to the shop</a></p>
       <div class="product-detail">
         <div class="product-gallery">
-          <div class="product-image">
-            {images[0] ? (
-              <img id="mainImage" src={images[0]} alt={imageAlt || title} width="900" height="900" />
-            ) : (
+          {images.length > 0 ? (
+            <div class="product-image product-slides-wrap">
+              <div class="product-slides" id="slides" tabindex="0" aria-label={`${title} photos`}>
+                {images.map((src, i) => (
+                  <img
+                    src={src}
+                    alt={i === 0 ? imageAlt || title : `${title}, photo ${i + 1}`}
+                    width="900"
+                    height="900"
+                    loading={i === 0 ? 'eager' : 'lazy'}
+                  />
+                ))}
+              </div>
+              {images.length > 1 && (
+                <>
+                  <button type="button" class="slide-arrow slide-prev" data-step="-1" aria-label="Previous photo">&lsaquo;</button>
+                  <button type="button" class="slide-arrow slide-next" data-step="1" aria-label="Next photo">&rsaquo;</button>
+                  <span class="slide-count" id="slideCount" aria-hidden="true">1 / {images.length}</span>
+                </>
+              )}
+            </div>
+          ) : (
+            <div class="product-image">
               <span class="product-image-empty">Photo coming soon</span>
-            )}
-          </div>
+            </div>
+          )}
           {images.length > 1 && (
             <div class="product-thumbs">
               {images.map((src, i) => (
-                <button type="button" data-thumb={src} aria-label={`Show photo ${i + 1}`} aria-pressed={i === 0 ? 'true' : 'false'}>
+                <button type="button" data-thumb={i} aria-label={`Show photo ${i + 1}`} aria-pressed={i === 0 ? 'true' : 'false'}>
                   <img src={src} alt="" width="120" height="120" loading="lazy" />
                 </button>
               ))}
@@ -80,15 +99,36 @@ const { Content } = await product.render();
 
   <script is:inline>
     (function () {
-      var main = document.getElementById('mainImage');
-      document.querySelectorAll('[data-thumb]').forEach(function (btn) {
-        btn.addEventListener('click', function () {
-          if (main) main.src = btn.getAttribute('data-thumb');
-          document.querySelectorAll('[data-thumb]').forEach(function (b) {
-            b.setAttribute('aria-pressed', b === btn ? 'true' : 'false');
-          });
+      // Photos sit side by side in a scroll-snap strip: swipe on phones,
+      // arrows and thumbnails elsewhere. The first photo is the cover.
+      var slides = document.getElementById('slides');
+      if (slides && slides.children.length > 1) {
+        var thumbs = document.querySelectorAll('[data-thumb]');
+        var count = document.getElementById('slideCount');
+        var current = 0;
+        var go = function (i) {
+          var n = slides.children.length;
+          i = (i + n) % n;
+          slides.scrollTo({ left: i * slides.clientWidth, behavior: 'smooth' });
+        };
+        slides.addEventListener('scroll', function () {
+          var i = Math.round(slides.scrollLeft / slides.clientWidth);
+          if (i === current) return;
+          current = i;
+          if (count) count.textContent = i + 1 + ' / ' + slides.children.length;
+          thumbs.forEach(function (b, j) { b.setAttribute('aria-pressed', j === i ? 'true' : 'false'); });
+        }, { passive: true });
+        thumbs.forEach(function (btn) {
+          btn.addEventListener('click', function () { go(Number(btn.getAttribute('data-thumb'))); });
         });
-      });
+        document.querySelectorAll('[data-step]').forEach(function (btn) {
+          btn.addEventListener('click', function () { go(current + Number(btn.getAttribute('data-step'))); });
+        });
+        slides.addEventListener('keydown', function (e) {
+          if (e.key === 'ArrowRight') { e.preventDefault(); go(current + 1); }
+          if (e.key === 'ArrowLeft') { e.preventDefault(); go(current - 1); }
+        });
+      }
 
       var form = document.getElementById('addForm');
       if (!form) return;
