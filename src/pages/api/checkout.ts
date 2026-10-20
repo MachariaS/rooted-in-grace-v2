@@ -100,9 +100,6 @@ export const POST: APIRoute = async ({ request }) => {
   } catch (err) {
     if (err instanceof CheckoutError) return json({ error: err.message }, 400);
     console.error('checkout failed', err);
-    // TEMP diagnostic: remove once checkout works.
-    const e = err as any;
-    const debug = String(e?.message ?? e).slice(0, 200) + (e?.code ? ` [${e.code}]` : '') + (e?.cause ? ` cause: ${String(e.cause?.message ?? e.cause).slice(0, 200)}` : '');
-    return json({ error: 'We could not start your payment. Please try again in a moment.', debug }, 500);
+    return json({ error: 'We could not start your payment. Please try again in a moment.' }, 500);
   }
 };
