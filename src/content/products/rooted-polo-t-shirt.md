@@ -6,7 +6,8 @@ summary: Wear a gentle reminder to keep growing in faith, walk in grace, and
   signature message, “Gentle Growth for All Hearts.” Available in different
   colours and sizes.
 images:
-  - /images/uploads/whatsapp-image-2026-10-19-at-08.18.37-1-.jpeg
+  - /images/uploads/polo_front.jpg
+  - /images/uploads/polo_back.jpg
 inStock: true
 sortOrder: 100
 ---
