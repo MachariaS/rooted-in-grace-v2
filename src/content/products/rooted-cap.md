@@ -5,7 +5,8 @@ summary: Wear a gentle reminder to keep growing in faith, walk in grace, and
   stay rooted in Christ. Designed with the Rooted in Grace logo. Available in
   different colours and sizes.
 images:
-  - /images/uploads/whatsapp-image-2026-10-19-at-08.18.36-1-.jpeg
+  - /images/uploads/cap_front.jpg
+  - /images/uploads/cap_back.jpg
 inStock: true
 sortOrder: 100
 ---
