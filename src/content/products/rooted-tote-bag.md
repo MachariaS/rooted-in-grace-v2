@@ -5,7 +5,8 @@ summary: Carry a little grace wherever you go. The Rooted in Grace tote bag is
   designed to be a beautiful reminder to walk in faith, grow with grace, and
   stay rooted in Christ. Available in different colours.
 images:
-  - /images/uploads/whatsapp-image-2026-10-19-at-08.18.36.jpeg
+  - /images/uploads/tote_front.jpg
+  - /images/uploads/tote_back.jpg
 inStock: true
 sortOrder: 100
 ---
