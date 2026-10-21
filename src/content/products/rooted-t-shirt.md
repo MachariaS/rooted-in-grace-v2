@@ -6,7 +6,7 @@ summary: Wear a gentle reminder to keep growing in faith, walk in grace, and
   signature message, “Gentle Growth for All Hearts.” Available in different
   colours and sizes.
 images:
-  - /images/uploads/tshirt_back.jpg
+  - /images/uploads/tshirt_front.jpg
   - /images/uploads/tshirt_back.jpg
 inStock: true
 sortOrder: 100
