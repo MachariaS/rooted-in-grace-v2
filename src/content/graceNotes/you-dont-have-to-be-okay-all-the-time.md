@@ -35,4 +35,6 @@ A gentle reminder: You matter beyond what you do for others, how much you achiev
 
 Take a breath. Check in with yourself. Give yourself the same kindness you so freely offer to others.
 
-You deserve that grace, too.Rooted in Grace | Gentle Growth for All Hearts
+You deserve that grace, too
+
+.Rooted in Grace | Gentle Growth for All Hearts
