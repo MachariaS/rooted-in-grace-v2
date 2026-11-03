@@ -5,7 +5,7 @@ summary: The Rooted in Grace water bottle is a simple, stylish everyday
   essential, designed to remind you of faith, growth, and grace with every sip.
   A little reminder to stay rooted, wherever life takes you.
 images:
-  - /images/uploads/bottle_front.jpg
+  - /images/uploads/rooted-in-grace-water-bottle.png
 inStock: true
 sortOrder: 100
 ---
